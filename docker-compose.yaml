@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  db:
+    container_name: db-chat-nest
+    hostname: db-chat-nest
+    image: postgres:14
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: db-chat-nest
+      POSTGRES_PASSWORD: db-chat-nest
+      POSTGRES_DB: db-chat-nest
+    ports:
+      - "5432:5432"
+    networks:
+      - back_pg
+
+  nest:
+    container_name: chat-nest
+    restart: always
+    build:
+      context: './back'
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./back:/nest
+      - '/nest/node_modules'
+    networks:
+      - back_pg
+    command: npm run start:dev
+
+networks:
+  back_pg:
+   driver: bridge
